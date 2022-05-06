@@ -1,14 +1,14 @@
 {
   "name": "eslint-plugin-styled",
   "description": "Checking babel macro import presence for JSX files with CSSProp used.",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "main": "dist/index.js",
   "scripts": {
     "build": "tsc"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/andrienko/eslint-plugin-cssprop-macro.git"
+    "url": "git+https://github.com/andrienko/eslint-plugin-styled.git"
   },
   "keywords": [
     "eslint",
