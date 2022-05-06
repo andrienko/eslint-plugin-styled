@@ -1,7 +1,8 @@
 # eslint-plugin-styled
 
 A simple plugin to check if you did not forget to import babel macro when using
-`css` prop of `styled-components`.
+`css` prop of `styled-components` - or to remove such import when `css` prop is
+not used.
 
 ## Installation
 
@@ -17,14 +18,15 @@ Add to your `.eslintrc`
 {
   "plugins": ["styled"],
   "rules": {
-    "styled/require-macro": [2]
+    "styled/require-macro": [2],
+    "styled/unused-macro": [2]
   }
 }
 ```
 
 ## Options
 
-There are additonal options available.
+There are additional options available.
 
 `prop` defines name of the prop (checks are case-insensitive).
 For `styled-components` it is `css`.
@@ -39,11 +41,26 @@ or something. It is `styled-components/macro` by default.
       "prop": "css",
       "import": "styled-components/macro"
     }
+  ],
+  "styled/unused-macro": [2,
+    {
+      "prop": "css",
+      "import": "styled-components/macro"
+    }
   ]
 }
 ```
 
 ## Disclaimer
 
-There is no tests here or proper meta... Maybe I will add it later. Feel free
+There is no tests here, nor proper meta... Maybe I will add it later. Feel free
 to pull-request these.
+
+This plugin seeks for import from required file - first import will be used. It
+won't check for named imports or whatever - there is an assumption that macro
+file is used only for macro `import "styled-components/macro`.
+
+I use this to use [styled-components](https://styled-components.com/) with
+[vite](https://vitejs.dev/) and
+[vite-plugin-babel-macros](https://www.npmjs.com/package/vite-plugin-babel-macros)
+

@@ -7,8 +7,7 @@ const ruleModule: Rule.RuleModule = {
     type: 'problem',
     docs: {
       url: 'https://github.com/andrienko/eslint-plugin-styled',
-      description:
-        'Checks for styled-components babel macro import presence when `css` prop is used on one of JSX elements',
+      description: 'Checks for styled-components babel macro import absence when `css` prop is not used JSX elements',
     },
     schema: [
       {
@@ -22,9 +21,8 @@ const ruleModule: Rule.RuleModule = {
     ],
   },
   create: (context) => {
-    let lastCssProp = null;
-    let hasMacroImported = false;
-    let lastImport = null;
+    let lastMacroImport = null;
+    let hasCSSProp = false;
 
     const { import: importPath = 'styled-components/macro', prop: checkedProp = 'css' } =
       typeof context.options[0] === 'object' ? context.options[0] : {};
@@ -34,33 +32,26 @@ const ruleModule: Rule.RuleModule = {
         const name = propName(attribute).toLowerCase();
 
         if (name === checkedProp.toLowerCase()) {
-          lastCssProp = attribute;
+          hasCSSProp = true;
         }
       },
       ImportDeclaration: (node) => {
         if (!node || !node.source || !node.source.value) {
           return;
         }
-        lastImport = node;
         const path = node.source.value as string;
         if (path === importPath) {
-          hasMacroImported = true;
+          lastMacroImport = node;
         }
       },
       'Program:exit': () => {
-        if (lastCssProp && !hasMacroImported) {
+        if (!hasCSSProp && lastMacroImport) {
           context.report({
-            message: `Files that have JSX elements that use \`${checkedProp.toLowerCase()}\` prop must have \`import "${importPath}"\`.`,
-            node: lastCssProp,
+            message: `Import from ${importPath} is redundant when not using \`${checkedProp.toLowerCase()}\` property`,
+            node: lastMacroImport,
             fix: (fixer) => {
               const fixes = [];
-              const fixText = `import "${importPath}"`;
-              if (lastImport) {
-                fixes.push(fixer.insertTextAfter(lastImport, fixText));
-              } else {
-                const sourceCode = context.getSourceCode();
-                fixes.push(fixer.insertTextBefore(sourceCode.ast.tokens[0], `${fixText}\n`));
-              }
+              fixes.push(fixer.remove(lastMacroImport));
               return fixes;
             },
           });
