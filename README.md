@@ -36,8 +36,8 @@ or something. It is `styled-components/macro` by default.
 "rules": {
   "styled/require-macro": [2,
     {
-      prop: 'css',
-      import: 'styled-components/macro'
+      "prop": "css",
+      "import": "styled-components/macro"
     }
   ]
 }
